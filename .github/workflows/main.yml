@@ -1,0 +1,30 @@
+name: Archive and Release
+
+on:
+  push:
+    tags:
+      - '*'
+  
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Archive content
+        run: |
+            7z a -previ revi-ventoy-conf.zip -r "ReviSetup" "WinISO" "ventoy"
+
+      - name: Upload ZIP file
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.TOKEN }}
+          file: revi-ventoy-conf.zip
+          asset_name: revi-ventoy-conf.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: |
+            Password is `revi`
